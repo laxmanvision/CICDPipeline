@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1061748029453",
+    "project_id": "flutterbuildpipeline",
+    "storage_bucket": "flutterbuildpipeline.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1061748029453:android:b6dc8676e1ded72af4bd44",
+        "android_client_info": {
+          "package_name": "com.pipeline.cicd.flutter_fuild_pipeline"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeHT1IZtvIQ3S_UGqTk8E7gERJIdqQR5c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
