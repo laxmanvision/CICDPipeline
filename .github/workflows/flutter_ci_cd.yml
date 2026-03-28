@@ -36,8 +36,4 @@ jobs:
       - name: Upload to Firebase App Distribution
         run: |
           npm install -g firebase-tools
-          firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
-            --app ${{ secrets.FIREBASE_APP_ID }} \
-            --token ${{ secrets.FIREBASE_TOKEN }} \
-            --groups "internal_tester" \
-            --release-notes "New build from GitHub Actions 🚀"
+          firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk --app "${{ secrets.FIREBASE_APP_ID }}" --token "${{ secrets.FIREBASE_TOKEN }}" --groups "internal_tester" --release-notes "New build from GitHub Actions 🚀"
