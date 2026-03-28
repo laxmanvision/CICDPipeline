@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - develop
+  pull_request:
+    branches:
+      - develop
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -30,10 +33,33 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      # ✅ Step 1: Generate dynamic name
+      - name: Set build name
+        run: echo "BUILD_NAME=Dev_shop_virtualKart_$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_ENV
+
       - name: Build APK
         run: flutter build apk --release
 
+      # ✅ Step 2: Rename APK
+      - name: Rename APK
+        run: |
+          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/${BUILD_NAME}.apk
+
+      # ✅ Step 3: Upload renamed APK
       - name: Upload to Firebase App Distribution
+        id: firebase_upload
         run: |
           npm install -g firebase-tools
-          firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk --app "${{ secrets.FIREBASE_APP_ID }}" --token "${{ secrets.FIREBASE_TOKEN }}" --groups "internal_tester" --release-notes "New build from GitHub Actions 🚀"
+          OUTPUT=$(firebase appdistribution:distribute build/app/outputs/flutter-apk/${BUILD_NAME}.apk --app "${{ secrets.FIREBASE_APP_ID }}" --token "${{ secrets.FIREBASE_TOKEN }}" --groups "internal_tester" --release-notes "${BUILD_NAME}")
+          echo "$OUTPUT"
+          # Extract Firebase download URL
+          DOWNLOAD_URL=$(echo "$OUTPUT" | grep -o 'https://firebaseappdistribution\.googleapis\.com/[^ ]*')
+          echo "DOWNLOAD_URL=$DOWNLOAD_URL" >> $GITHUB_ENV
+
+      # ✅ Step 4: Send Slack notification
+      - name: Notify Slack
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data "{\"text\":\"🚀 New APK Build: *${BUILD_NAME}*\n📥 Download here: ${DOWNLOAD_URL}\"}" \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
