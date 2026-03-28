@@ -3,10 +3,7 @@ name: Flutter CI/CD
 on:
   push:
     branches:
-      - develop
-  pull_request:
-    branches:
-      - develop
+      - develop   # only triggers after merge into develop
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
